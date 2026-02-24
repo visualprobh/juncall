@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulário PDF Multi-páginas</title>
+  <style>
+  
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 40px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+	h4 {
+  font-weight: normal;
+  font-size: 14px; /* ajuste conforme preferir */
+  margin: 8px 0;   /* para controlar o espaçamento */
+}
+h3 {
+  font-weight: bold;
+  font-size: 14px; /* ajuste conforme preferir */
+  margin: 8px 0;   /* para controlar o espaçamento */
+}
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .linha {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .campo {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 3px;
+	  font-size: 11px;
+    }
+    .input-texto {
+  display: inline-block;
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+    textarea {
+      resize: none;
+      height: 80px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      margin: 20px auto 0;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-start;
+      margin-bottom: 20px;
+    }
+    .logo {
+      max-width: 100px;
+      max-height: 100px;
+      object-fit: contain;
+    }
+    .titulo h2 {
+      margin: 0;
+    }
+    .opcoes {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .opcoes label {
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .opcoes input {
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    .campo.grande {
+      flex: 3;
+    }
+	.campo.medio {
+      flex: 2;
+    }.campo.mini {
+  flex: 0 0 100px;   /* fixa em 100px */
+  max-width: 100px;  /* limite menor */
+}
+
+    .campo.pequeno {
+      flex: 1;
+      max-width: 150px;
+    }
+
+    /* NOVO: Blocos destacados */
+    .bloco {
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 2px solid #ececec;
+      border-radius: 10px;
+      background-color: #f9fbfa;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.0);
+    }
+	.linha-separacao {
+  height: 2px;
+  background-color: #ececec;
+  margin: 20px 0;
+}
+.page-break {
+  page-break-before: always; /* impressão */
+  break-before: page;        /* navegadores modernos */
+  height: 0;
+}
+.assinatura {
+  text-align: center;
+  margin: 40px auto; /* espaçamento superior e inferior */
+  width: 300px;      /* largura fixa (pode ajustar) */
+}
+
+.linha-assinatura {
+  border-bottom: 1px solid #000; /* linha preta */
+  height: 50px;                  /* espaço para assinar */
+}
+
+.assinatura p {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: normal;
+}
+p {
+  margin: 2px 0;
+  line-height: 1.2; /* padrão é ~1.5 */
+}
+button {
+  background: #ddd;
+  color: #333;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+}
+button:hover {
+  background: #ccc;
+}
+.titulo {
+  display: flex;
+  align-items: center;   /* alinha logo e texto no eixo vertical */
+  justify-content: center; /* centraliza no eixo horizontal */
+  gap: 10px;  /* espaço entre a logo e o texto */
+}
+
+.titulo h2 {
+  margin: 0;            /* tira espaçamento padrão */
+  text-align: center;   /* garante que texto fique centralizado */
+}
+
+.titulo img.logo {
+  height: 40px;   /* ajusta altura da logo */
+}
+.centro {
+  text-align: center; /* centraliza o conteúdo */
+}
+
+.link-simples {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 9px; /* opcional */
+}
+
+.link-simples:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+
+:root{
+      --border: #e6e6e6;    /* cor das linhas (muito clara) */
+      --header-bg: #fafafa; /* fundo do cabeçalho */
+      --row-hover: #f5f7fb;  /* leve hover nas linhas */
+      --text: #222;
+      --radius: 8px;
+    }
+.table-wrap{
+      max-width: 760px;
+      margin: 0 auto;
+      box-shadow: 0 1px 2px rgba(16,24,40,0.03);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse; /* linhas contínuas, mais limpo */
+      background: white;
+    }
+
+    thead th{
+      text-align: center;
+      font-weight: 600;
+      padding: 12px 16px;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    tbody td{
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border); /* linhas claras entre linhas */
+      font-size: 14px;
+    }
+
+    /* remover a linha de baixo da última linha */
+    tbody tr:last-child td{
+      border-bottom: none;
+    }
+
+    /* hover sutil */
+    tbody tr:hover{
+      background: var(--row-hover);
+    }
+	table, th, td {
+  border: 1px solid var(--border);
+  border-collapse: collapse;
+}
+
+    /* responsivo: empilha em telas muito pequenas */
+    @media (max-width: 480px){
+      thead {
+        display: none; /* remove cabeçalho para versão empilhada */
+      }
+      table, tbody, tr, td {
+        display: block;
+        width: 100%;
+      }
+      tbody tr {
+        margin-bottom: 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: none;
+      }
+      /* rótulos à esquerda (apenas visuais) */
+      tbody td::before{
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 8px;
+        color: #555;
+      }
+    }
+	.txt{
+	text-align: center;}
+
+ </style>
+ 
+</head>
+<body>
+  
+  <form id="meuFormulario">
+    <div class="titulo">
+      <img src="x.png" alt="Logo" class="logo" >
+      <h2>Formulário de Cadastro Pessoa Jurídica</h2>
+    </div>
+
+    <!-- Opções -->
+    <div class="bloco">
+
+    <!-- Endereço e Código -->
+    
+      <div class="linha">
+	  
+	  <div class="campo grande">
+          <label>Endereço Comercial</label>
+          <input type="text" placeholder="Nome da rua, n°">
+        </div>
+        <div class="campo pequeno">
+          <label>Bairro</label>
+          <input type="text" placeholder="Digite o Bairro">
+        </div>
+  
+		<div class="campo pequeno">
+          <label>CEP</label>
+          <input type="text" placeholder="Digite o CEP">
+        </div>
+      </div>
+    <!-- cidade estado -->
+    
+      <div class="linha">
+        <div class="campo pequeno">
+          <label for="aluguel">Cidade </label>
+          <input type="text"  placeholder="Cidade" >
+        </div>
+        <div class="campo pequeno">
+          <label>UF</label>
+          <input type="text" placeholder="Estado">
+        </div>
+      </div>
+
+    <!-- cel /tel -->
+    
+      <div class="linha">
+        <div class="campo pequeno">
+          <label>Telefone</label>
+          <input type="text" placeholder="Tel">
+        </div>
+        <div class="campo pequeno">
+          <label>Cel / WhatsApp</label>
+          <input type="text" placeholder="cel/WhatsApp">
+        </div>
+		<div class="campo ">
+          <label>E-mail</label>
+          <input type="email" placeholder="@email">
+        </div>
+      </div>
+   
+    <!-- cnpj -->
+  
+      <div class="linha">
+        <div class="campo pequeno">
+          <label>CNPJ</label>
+          <input type="text" placeholder="n° CNPJ">
+        </div>
+        <div class="campo pequeno">
+          <label>Inscrição Estadual</label>
+          <input type="text" placeholder="IE">
+        </div>
+		
+      </div>
+		
+		</div> <!-------------fim do bloco ------->
+		
+		<!-- capital -->
+      <div class="bloco">
+      <div class="linha">
+        <div class="campo pequeno">
+          <label>Capital Resgistrado:</label>
+          <input type="text" placeholder="R$00,00">
+        </div>
+        <div class="campo pequeno">
+          <label>Patrimônio Líquido</label>
+          <input type="text" placeholder="R$00,00">
+        </div>
+		<div class="campo ">
+          <label>Gerente Financeiro ou Contato na empresa&nbsp;(tel/cel)</label>
+          <input type="text" placeholder="Tel/Cel">
+        </div>
+		
+      </div>
+		</div> <!-- fim bloco -->
+		
+		 <div class="bloco"> <!-- bloco tabela composição capital -->
+		 <h3 class="txt">COMPOSIÇÃO CAPITAL</h3>
+		<div class="table-wrap" aria-label="Tabela editável">
+    <table>
+      <thead>
+        <tr>
+          <th >Nome Dos sócios/Diretores</th>
+          <th>&nbsp;&nbsp;&nbsp;Cargo&nbsp;&nbsp;&nbsp;</th>
+          <th>&nbsp;&nbsp;Participação&nbsp;&nbsp;&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+	
+  </div>
+		<!-- fim bloco tabela -->
+		
+		
+	<div class="bloco"> <!-- bloco tabela composição capital -->
+		 <h3 class="txt">REFERÊNCIAS BANCÁRIAS E COMERCIAIS</h3>
+		<div class="table-wrap" aria-label="Tabela editável">
+    <table>
+      <thead>
+        <tr>
+          <th >Fornecedores&nbsp;/&nbsp;End&nbsp;/&nbsp;Tel&nbsp;/&nbsp;Contato</th>
+          <th>&nbsp&nbsp;Bancos&nbsp;Agencias&nbsp;/Telefones&nbsp;</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          
+        </tr>
+		<tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          
+        </tr>
+		<tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+	
+  </div>
+		<!-- fim bloco tabela -->	
+	<div class="page-break"> <!------fim da pagina 1-------->
+	   </div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	
+	   <div class="bloco">
+	   <h3 class="txt">DADOS DO SEU MOVIMENTO</h3>
+      <div class="linha">  
+        <div class="campo pequeno">
+       <label>Estoques:</label>
+          <input type="text" placeholder="0000">
+        </div>
+        <div class="campo pequeno">
+          <label>Despesas Mensais</label>
+          <input type="text" placeholder="R$00,00">
+        </div>
+		<div class="campo pequeno">
+          <label>Faturamento Mensal</label>
+          <input type="text" placeholder="R$00,00">
+        </div>
+		<div class="campo pequeno">
+          <label>Maquinaria</label>
+          <input type="text" placeholder="xxxx">
+        </div>
+           </div>
+		   
+		   <div class="linha">  
+        <div class="campo ">
+       <label>Instalações&nbsp;/&nbsp; Móveis&nbsp; /&nbsp; Utencílios </label>
+          <input type="text" placeholder="0000">
+        </div>
+        <div class="campo pequeno">
+          <label>Veículos</label>
+          <input type="text" placeholder="N°">
+        </div>
+		<div class="campo pequeno">
+          <label>N° de empregados </label>
+          <input type="text" placeholder="0000">
+        </div>
+		<div class="campo pequeno">
+          <label>Folha de Pagamento</label>
+          <input type="text" placeholder="R$00,00">
+        </div>
+           </div>
+		   
+		   <div class="linha">  
+        <div class="campo ">
+       <label>Ligações com Outras Empresas? </label>
+          <input type="text" placeholder="sim / Nome Empr.">
+        </div>
+        <div class="campo pequeno">
+          <label>Seguros</label>
+          <input type="text" placeholder="sim/não">
+        </div>
+		<div class="campo pequeno">
+          <label>Filiais? </label>
+          <input type="text" placeholder="sim/não">
+        </div>
+		<div class="campo pequeno">
+          <label>Uso da razão social</label>
+          <input type="text" placeholder="txt">
+        </div>
+           </div>
+		   
+		   <div class="linha">  
+        <div class="campo ">
+       <label>Prazo sociedade: &nbsp; Os sócios ou diretores estão ligados com outras empresas? </label>
+          <input type="text" placeholder="sim / Nome Empr.">
+        </div>
+		</div>
+		   
+	  </div>	
+
+       
+	  	     
+	   <div class="titulo">
+     
+    </div>
+	
+	  <div class="bloco">
+	  <div class="linha">
+	  <h4>GENTILEZA ANEXAR COPIA DOS SEGUINTES DOCUMENTOS </h4>
+	  </div>
+	  
+	  
+	  
+	  <div class="linha">
+	  
+
+01. Contrato social.<br>
+
+02. Comprovante de inscrição e situação cadastral&nbsp; (CNPJ).<br>
+
+03. Inscrição estadual.<br>
+
+04. Último balanço do faturamento.<br>
+
+05. RG e CPF dos sócios.<br>
+
+06. IRPG.<br>
+
+
+	  </div>
+	  
+	 <br>
+ 
+	  <div class="linha">
+	  <h3> Local data: ______________________________________,___________de _________________de 20______________.<br>
+	  <div class="assinatura">
+  <div class="linha-assinatura"></div>
+  <p>Assinatura representante legal</p>
+</div>
+ </div>
+ <div class="linha">
+	  <h3> Enviar toda documentação em PDF para:<br>
+	  
+  <p>comercial1@mcrimob.com.br</p>
+  <p>comercial2@mcrimob.com.br</p>
+</div>
+ </div>
+
+    
+	
+      <!-- ⬇️ Mover o botão para DENTRO do form -->
+    <div class="centro">
+  <a href="#" onclick="gerarPDF()" class="link-simples">Gerar PDF</a>
+</div>
+
+    </form> <!-- ✅ agora fecha aqui o form -->
+	
+	<!-------------------------mascra monetaria-------------------->
+ <script>
+document.getElementById("aluguel").addEventListener("input", function(e) {
+  let value = e.target.value;
+  value = value.replace(/\D/g, "");
+  value = (value / 100).toFixed(2) + "";
+  value = value.replace(".", ",");
+  value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  e.target.value = "R$ " + value;
+});
+</script>
+<script>
+function formatarMoeda(input) {
+  let valor = input.value;
+
+  // Remove tudo que não é número
+  valor = valor.replace(/\D/g, "");
+
+  // Formata para centavos
+  valor = (valor / 100).toFixed(2) + "";
+
+  // Troca ponto por vírgula
+  valor = valor.replace(".", ",");
+
+  // Adiciona separador de milhar
+  valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+  // Atualiza o input
+  input.value = "R$ " + valor;
+}
+
+// Aplica a máscara enquanto digita
+document.getElementById("renda").addEventListener("input", function () {
+  formatarMoeda(this);
+});
+</script>
+<!---------------------------------fim mascara monetaria------------------------->
+
+<!-------------------mascara telefone /cel-------------------------->
+<script>
+function aplicarMascaraTelefone(valor) {
+  valor = valor.replace(/\D/g, "");
+  valor = valor.replace(/^(\d{2})(\d)/g, "($1) $2");
+  valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+  return valor;
+}
+
+function aplicarMascaraCelular(valor) {
+  valor = valor.replace(/\D/g, "");
+  valor = valor.replace(/^(\d{2})(\d)/g, "($1) $2");
+  valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
+  return valor;
+}
+
+// Telefones fixos
+document.querySelectorAll(".telefone").forEach(input => {
+  input.addEventListener("input", e => {
+    e.target.value = aplicarMascaraTelefone(e.target.value);
+  });
+});
+
+// Celulares
+document.querySelectorAll(".celular").forEach(input => {
+  input.addEventListener("input", e => {
+    e.target.value = aplicarMascaraCelular(e.target.value);
+  });
+});
+
+</script>
+<!---------------------------------fim mascara tel cel ---------------->
+
+
+  <!-- Bibliotecas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+async function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const form = document.getElementById("meuFormulario");
+
+  // Substitui inputs por spans temporariamente
+  const inputs = form.querySelectorAll("input, textarea");
+  const substituidos = [];
+
+  inputs.forEach(input => {
+    const tipo = input.type.toLowerCase();
+    if (tipo === "checkbox" || tipo === "radio" || tipo === "button" || tipo === "submit") return;
+
+    const span = document.createElement("span");
+    span.textContent = input.value || input.placeholder;
+    span.className = "input-texto";
+    span.style.minHeight = input.offsetHeight + "px";
+    input.style.display = "none";
+    input.parentNode.insertBefore(span, input);
+    substituidos.push({ input, span });
+  });
+
+  // Gera canvas do form inteiro
+  const canvas = await html2canvas(form, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgWidth = pdfWidth;
+  const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  // Divide em múltiplas páginas, se necessário
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pdfHeight;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+  }
+
+  pdf.save("formulárioPessoaJurídicaMCR.pdf");
+
+  // Restaura inputs
+  substituidos.forEach(({ input, span }) => {
+    input.style.display = "";
+    span.remove();
+  });
+}
+
+</script>
+
+
+
+</body>
+</html>
